@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Microsoft/.claude/**)",
+      "Bash(find 'C:\\\\Users\\\\Microsoft/.claude' -maxdepth 5 -iname *.md -path *skill*)",
+      "Bash(xargs -I{} grep -l -i \"fondasi\\\\|foundation\" {})",
+      "Bash(find 'C:\\\\Users\\\\Microsoft/.claude' -maxdepth 3 -type d -iname *plugin*)",
+      "Bash(find 'C:\\\\Users\\\\Microsoft/.claude/plugins' -maxdepth 6 -iname *fondasi*)",
+      "PowerShell(git config *)",
+      "PowerShell(npx create-next-app@latest --help)",
+      "PowerShell(npx create-next-app@latest . --ts --tailwind --eslint --app --src-dir --use-npm --yes 2>&1)",
+      "Bash(curl -s -o /dev/null -w \"HTTP status: %{http_code}\\\\n\" http://localhost:3000)",
+      "Bash(curl -s http://localhost:3000)"
+    ]
+  }
+}
