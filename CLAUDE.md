@@ -198,16 +198,38 @@ Jangan bilang "sudah selesai" sebelum poin terakhir kamu sampaikan.
 
 Perbarui bagian ini setiap ada perubahan besar.
 
-  Terakhir diperbarui : 25 Juli 2026
-  Tahap saat ini      : dokumen fondasi selesai, belum ada kode/setup terpasang
-  Sistem operasi      : Linux / macOS (dikonfirmasi saat setup pertama)
+  Terakhir diperbarui : 27 Juli 2026
+  Tahap saat ini      : setup awal selesai (Next.js, Prisma, login, koneksi
+                        Neon), tapi belum ada satu pun fitur PRD versi 1
+                        yang dibangun. Cuma kerangka.
+  Sistem operasi      : Windows 11
   Dokumen fondasi     : lengkap — PRD.md, SCHEMA.md, ARCHITECTURE.md,
                         DESIGN.md, CONVENTIONS.md (docs/)
-  Fitur yang jalan    : —
-  Sedang dikerjakan   : menunggu keputusan lanjut ke skill setup-awal
+  Fitur yang jalan    : login (username+password, sesi JWT, semua rute
+                        selain /login diproteksi lewat src/proxy.ts) —
+                        sudah dites langsung lewat browser dan berhasil.
+                        Username & hash password ada di .env
+                        (APP_USERNAME, APP_PASSWORD_HASH), tidak disimpan
+                        di database — lihat docs/SCHEMA.md
+  Sedang dikerjakan   : menunggu keputusan modul pertama yang dibangun
+                        (lihat "Fitur versi 1" di docs/PRD.md — belum satu
+                        pun dari 6 fitur data tugas yang mulai dikerjakan)
   Keputusan penting   : stack sesuai TECH STACK; login pakai username/password
                         (BUKAN Google Sign-In — keputusan awal diganti
                         25 Juli 2026, lihat docs/CONVENTIONS.md);
                         aplikasi untuk 1 pengguna (bukan tim);
-                        repo GitHub sudah ditentukan, belum di-init
-  Utang teknis        : —
+                        repo GitHub sudah di-init, terhubung ke
+                        github.com/farhanaazziizz/WebPersonal, dan sudah
+                        sinkron dengan origin/main;
+                        database Neon sudah terhubung lewat DATABASE_URL,
+                        tabel Tugas sudah ada lewat 1 migration awal
+  Utang teknis        : halaman utama (src/app/page.tsx) masih template
+                        default create-next-app, belum jadi halaman "Fokus
+                        Hari Ini"; belum ada app/api untuk data Tugas;
+                        belum ada komponen kartu tugas/form; Prisma Client
+                        tidak ter-generate otomatis saat install (tidak ada
+                        script postinstall) — jalankan `npx prisma generate`
+                        manual tiap kali install ulang; seluruh pekerjaan
+                        setup-awal (Prisma, Auth.js, halaman login, shadcn
+                        card/input/label) belum pernah di-commit — masih
+                        menumpuk sebagai perubahan belum tersimpan di git
