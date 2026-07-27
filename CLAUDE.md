@@ -199,37 +199,72 @@ Jangan bilang "sudah selesai" sebelum poin terakhir kamu sampaikan.
 Perbarui bagian ini setiap ada perubahan besar.
 
   Terakhir diperbarui : 27 Juli 2026
-  Tahap saat ini      : setup awal selesai (Next.js, Prisma, login, koneksi
-                        Neon), tapi belum ada satu pun fitur PRD versi 1
-                        yang dibangun. Cuma kerangka.
+  Tahap saat ini      : modul "Fokus Hari Ini" (fitur #1, #2, sebagian #5 di
+                        PRD.md) selesai dibangun dan dites lewat browser.
+                        Fitur #3 (tambah/ubah tugas), #4 (halaman /tugas +
+                        filter), #6 (hapus permanen) belum dikerjakan.
   Sistem operasi      : Windows 11
   Dokumen fondasi     : lengkap — PRD.md, SCHEMA.md, ARCHITECTURE.md,
                         DESIGN.md, CONVENTIONS.md (docs/)
-  Fitur yang jalan    : login (username+password, sesi JWT, semua rute
-                        selain /login diproteksi lewat src/proxy.ts) —
-                        sudah dites langsung lewat browser dan berhasil.
-                        Username & hash password ada di .env
-                        (APP_USERNAME, APP_PASSWORD_HASH), tidak disimpan
-                        di database — lihat docs/SCHEMA.md
-  Sedang dikerjakan   : menunggu keputusan modul pertama yang dibangun
-                        (lihat "Fitur versi 1" di docs/PRD.md — belum satu
-                        pun dari 6 fitur data tugas yang mulai dikerjakan)
-  Keputusan penting   : stack sesuai TECH STACK; login pakai username/password
+  Fitur yang jalan    : (1) login (username+password, sesi JWT, semua rute
+                        selain /login diproteksi lewat src/proxy.ts).
+                        (2) Halaman "/" Fokus Hari Ini — daftar tugas aktif
+                        (status != Selesai) tersusun otomatis: level
+                        kepentingan efektif (naik 1 tingkat tiap 3 hari
+                        terlambat, maksimal High — lihat
+                        src/lib/tugas-urutan.ts) turun ke urutan tampil,
+                        lalu batas waktu. Tandai-selesai lewat checkbox di
+                        baris (optimistic update + toast undo "Batalkan"),
+                        lewat PATCH /api/tugas/[id]. Tabel di layar lebar,
+                        kartu di layar sempit (belum saya verifikasi visual
+                        langsung — otomatisasi browser yang saya pakai
+                        tidak bisa diandalkan mengubah ukuran viewport tab,
+                        perlu dicek manual di HP/resize browser).
+                        Keduanya sudah dites lewat browser dan berhasil.
+  Sedang dikerjakan   : menunggu keputusan modul berikutnya — form
+                        tambah/ubah tugas (fitur #3, PRD.md) kemungkinan
+                        paling masuk akal duluan karena saat ini isi tugas
+                        cuma bisa masuk lewat script
+                        scripts/seed-data-uji-tugas.ts, bukan dari aplikasi
+  Keputusan tertunda  : hosting production (tetap Vercel, atau self-host di
+                        perangkat nyala-terus + Tailscale untuk akses luar
+                        rumah, database Neon tetap dipakai kalau self-host)
+                        — dibahas lain waktu, BELUM final, TECH STACK di
+                        bawah masih yang berlaku. Development untuk
+                        sekarang tetap di laptop sendiri (Windows 11) +
+                        Neon, tidak terpengaruh keputusan ini
+  Keputusan penting   : stack sesuai TECH STACK, dengan tambahan
+                        @prisma/adapter-pg + pg (WAJIB untuk Prisma v7,
+                        lihat docs/CONVENTIONS.md — bukan pilihan, bukan
+                        penyimpangan stack); login pakai username/password
                         (BUKAN Google Sign-In — keputusan awal diganti
                         25 Juli 2026, lihat docs/CONVENTIONS.md);
+                        level kepentingan naik 1 tingkat tiap 3 hari
+                        terlambat, maksimal High (diputuskan 27 Juli 2026,
+                        tidak tercatat sebagai angka pasti di PRD.md);
                         aplikasi untuk 1 pengguna (bukan tim);
                         repo GitHub sudah di-init, terhubung ke
                         github.com/farhanaazziizz/WebPersonal, dan sudah
                         sinkron dengan origin/main;
                         database Neon sudah terhubung lewat DATABASE_URL,
                         tabel Tugas sudah ada lewat 1 migration awal
-  Utang teknis        : halaman utama (src/app/page.tsx) masih template
-                        default create-next-app, belum jadi halaman "Fokus
-                        Hari Ini"; belum ada app/api untuk data Tugas;
-                        belum ada komponen kartu tugas/form; Prisma Client
-                        tidak ter-generate otomatis saat install (tidak ada
-                        script postinstall) — jalankan `npx prisma generate`
-                        manual tiap kali install ulang; seluruh pekerjaan
-                        setup-awal (Prisma, Auth.js, halaman login, shadcn
-                        card/input/label) belum pernah di-commit — masih
-                        menumpuk sebagai perubahan belum tersimpan di git
+  Utang teknis        : belum ada form tambah/ubah tugas (fitur #3) —
+                        data tugas cuma bisa masuk lewat
+                        scripts/seed-data-uji-tugas.ts; belum ada halaman
+                        /tugas dengan filter kategori/status (fitur #4);
+                        belum ada hapus permanen (fitur #6); TIDAK memakai
+                        app/loading.tsx — kombinasi Turbopack dev +
+                        loading.tsx + RootLayout async bikin halaman macet
+                        permanen menampilkan skeleton (root cause & aturan
+                        pengganti dicatat di docs/CONVENTIONS.md); tampilan
+                        kartu di layar sempit belum diverifikasi visual
+                        langsung oleh saya; `next start` (mode produksi)
+                        gagal login dengan error Auth.js "UntrustedHost" —
+                        belum diselesaikan karena terkait keputusan hosting
+                        yang masih tertunda; ada 10 kerentanan npm audit
+                        (4 moderate, 6 high) di dependency tool build
+                        (shadcn CLI, prisma dev, next) — bukan dari kode
+                        aplikasi, perbaikannya butuh downgrade besar,
+                        sengaja belum disentuh; Prisma Client tidak
+                        ter-generate otomatis saat install — jalankan
+                        `npx prisma generate` manual tiap kali install ulang
