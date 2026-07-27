@@ -1,0 +1,36 @@
+// Diturunkan dari docs/SCHEMA.md — jangan ubah struktur di sini tanpa
+// memperbarui docs/SCHEMA.md di commit yang sama (aturan CLAUDE.md).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum LevelKepentingan {
+  Low
+  Medium
+  High
+}
+
+enum StatusTugas {
+  Belum
+  Dikerjakan
+  Selesai
+}
+
+model Tugas {
+  id                   String           @id @default(cuid())
+  namaTugas            String
+  batasWaktu           DateTime
+  levelKepentinganAwal LevelKepentingan @default(Medium)
+  kategori             String
+  status               StatusTugas      @default(Belum)
+  catatan              String?
+  dibuatPada           DateTime         @default(now())
+  terakhirDiubahPada   DateTime         @updatedAt
+  selesaiPada          DateTime?
+}

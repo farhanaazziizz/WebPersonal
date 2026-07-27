@@ -1,4 +1,4 @@
-Terakhir diperbarui: 25 Juli 2026
+Terakhir diperbarui: 27 Juli 2026
 
 # CONVENTIONS — Aplikasi Manajemen Tugas Pribadi
 
@@ -45,6 +45,16 @@ bertentangan dengan dokumen ini, `CLAUDE.md` yang menang.
 | Prisma | Mendefinisikan struktur tabel dan baca/tulis ke database |
 | Auth.js, dengan cara masuk Credentials (bukan Google) | Mengelola sesi login dari username/password, dicocokkan dengan `APP_USERNAME` dan `APP_PASSWORD_HASH` di environment variable |
 | bcrypt (atau sejenis) | Mencocokkan password yang diketik dengan hash yang tersimpan, tanpa pernah menyimpan password asli |
+
+## Hal teknis yang gampang salah
+
+- **Tanda `$` di `APP_PASSWORD_HASH` pada `.env` wajib di-escape jadi `\$`**
+  (misalnya `\$2b\$12\$...`). Next.js membaca `$NAMA` di `.env` sebagai
+  referensi ke variabel lain — hash bcrypt selalu mengandung `$`, jadi kalau
+  tidak di-escape, sebagian hash diam-diam hilang dan login gagal terus tanpa
+  pesan error yang menjelaskan sebabnya. `scripts/buat-hash-password.mjs`
+  sudah otomatis meng-escape saat mencetak hasilnya, tapi kalau menempel hash
+  dari tempat lain, ingat aturan ini.
 
 ## Pendekatan yang pernah diputuskan lalu ditinggalkan
 
