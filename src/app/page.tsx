@@ -1,8 +1,11 @@
-import { ambilTugasAktif } from "@/lib/tugas";
+import { ambilTugasAktif, ambilDaftarKategori } from "@/lib/tugas";
 import { DaftarTugasAktif } from "@/components/tugas/DaftarTugasAktif";
 
 export default async function FokusHariIniPage() {
-  const tugasAktif = await ambilTugasAktif();
+  const [tugasAktif, daftarKategori] = await Promise.all([
+    ambilTugasAktif(),
+    ambilDaftarKategori(),
+  ]);
 
   return (
     <div className="mx-auto w-full max-w-4xl flex-1 px-4 py-6 md:px-6 md:py-8">
@@ -12,7 +15,7 @@ export default async function FokusHariIniPage() {
         batas waktu.
       </p>
       <div className="mt-6">
-        <DaftarTugasAktif tugasAwal={tugasAktif} />
+        <DaftarTugasAktif tugasAwal={tugasAktif} daftarKategori={daftarKategori} />
       </div>
     </div>
   );

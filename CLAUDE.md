@@ -199,10 +199,11 @@ Jangan bilang "sudah selesai" sebelum poin terakhir kamu sampaikan.
 Perbarui bagian ini setiap ada perubahan besar.
 
   Terakhir diperbarui : 27 Juli 2026
-  Tahap saat ini      : modul "Fokus Hari Ini" (fitur #1, #2, sebagian #5 di
-                        PRD.md) selesai dibangun dan dites lewat browser.
-                        Fitur #3 (tambah/ubah tugas), #4 (halaman /tugas +
-                        filter), #6 (hapus permanen) belum dikerjakan.
+  Tahap saat ini      : modul "Fokus Hari Ini" (fitur #1, #2, sebagian #5)
+                        dan modul "Form Tambah/Ubah Tugas" (fitur #3) di
+                        PRD.md selesai dibangun dan dites lewat browser.
+                        Fitur #4 (halaman /tugas + filter) dan #6 (hapus
+                        permanen) belum dikerjakan.
   Sistem operasi      : Windows 11
   Dokumen fondasi     : lengkap — PRD.md, SCHEMA.md, ARCHITECTURE.md,
                         DESIGN.md, CONVENTIONS.md (docs/)
@@ -220,12 +221,20 @@ Perbarui bagian ini setiap ada perubahan besar.
                         langsung — otomatisasi browser yang saya pakai
                         tidak bisa diandalkan mengubah ukuran viewport tab,
                         perlu dicek manual di HP/resize browser).
-                        Keduanya sudah dites lewat browser dan berhasil.
-  Sedang dikerjakan   : menunggu keputusan modul berikutnya — form
-                        tambah/ubah tugas (fitur #3, PRD.md) kemungkinan
-                        paling masuk akal duluan karena saat ini isi tugas
-                        cuma bisa masuk lewat script
-                        scripts/seed-data-uji-tugas.ts, bukan dari aplikasi
+                        (3) Tambah tugas baru dan ubah tugas yang sudah ada,
+                        satu Dialog form (klik "Tambah Tugas", atau klik
+                        baris tugas mana pun untuk ubah) — nama, batas
+                        waktu, level kepentingan awal, kategori (dengan
+                        autocomplete dari kategori yang pernah dipakai),
+                        catatan. Validasi wajib isi (nama, batas waktu,
+                        kategori) di client dan server. Lewat
+                        POST /api/tugas (tambah) dan PATCH /api/tugas/[id]
+                        (ubah, endpoint yang sama dipakai checkbox
+                        tandai-selesai). Semua sudah dites lewat browser:
+                        alur normal, alur ubah, dan validasi form kosong.
+  Sedang dikerjakan   : menunggu keputusan modul berikutnya — kandidat:
+                        halaman /tugas dengan filter kategori/status
+                        (fitur #4), atau hapus permanen (fitur #6)
   Keputusan tertunda  : hosting production (tetap Vercel, atau self-host di
                         perangkat nyala-terus + Tailscale untuk akses luar
                         rumah, database Neon tetap dipakai kalau self-host)
@@ -248,11 +257,9 @@ Perbarui bagian ini setiap ada perubahan besar.
                         sinkron dengan origin/main;
                         database Neon sudah terhubung lewat DATABASE_URL,
                         tabel Tugas sudah ada lewat 1 migration awal
-  Utang teknis        : belum ada form tambah/ubah tugas (fitur #3) —
-                        data tugas cuma bisa masuk lewat
-                        scripts/seed-data-uji-tugas.ts; belum ada halaman
-                        /tugas dengan filter kategori/status (fitur #4);
-                        belum ada hapus permanen (fitur #6); TIDAK memakai
+  Utang teknis        : belum ada halaman /tugas dengan filter
+                        kategori/status (fitur #4); belum ada hapus
+                        permanen (fitur #6); TIDAK memakai
                         app/loading.tsx — kombinasi Turbopack dev +
                         loading.tsx + RootLayout async bikin halaman macet
                         permanen menampilkan skeleton (root cause & aturan

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { StatusTugas, type LevelKepentingan } from "@/generated/prisma/enums";
 import { urutkanTugasAktif, type TugasAktif } from "@/lib/tugas-urutan";
+import { FormTugasDialog } from "@/components/tugas/FormTugasDialog";
 
 const formatTanggal = new Intl.DateTimeFormat("id-ID", {
   day: "numeric",
@@ -39,8 +42,35 @@ async function ubahStatusLewatApi(id: string, status: StatusTugas) {
   }
 }
 
-export function DaftarTugasAktif({ tugasAwal }: { tugasAwal: TugasAktif[] }) {
+export function DaftarTugasAktif({
+  tugasAwal,
+  daftarKategori,
+}: {
+  tugasAwal: TugasAktif[];
+  daftarKategori: string[];
+}) {
+  const router = useRouter();
   const [daftar, setDaftar] = useState(tugasAwal);
+  const [dialogTerbuka, setDialogTerbuka] = useState(false);
+  const [tugasDiedit, setTugasDiedit] = useState<TugasAktif | null>(null);
+
+  // Server mengirim tugasAwal baru tiap kali router.refresh() dipanggil
+  // (setelah tambah/ubah tugas) — sinkronkan state lokal saat itu terjadi.
+  const [tugasAwalSebelumnya, setTugasAwalSebelumnya] = useState(tugasAwal);
+  if (tugasAwal !== tugasAwalSebelumnya) {
+    setTugasAwalSebelumnya(tugasAwal);
+    setDaftar(tugasAwal);
+  }
+
+  function bukaTambahTugas() {
+    setTugasDiedit(null);
+    setDialogTerbuka(true);
+  }
+
+  function bukaUbahTugas(tugas: TugasAktif) {
+    setTugasDiedit(tugas);
+    setDialogTerbuka(true);
+  }
 
   async function tandaiSelesai(tugas: TugasAktif) {
     const statusSebelumnya = tugas.status;
@@ -71,19 +101,43 @@ export function DaftarTugasAktif({ tugasAwal }: { tugasAwal: TugasAktif[] }) {
     });
   }
 
+  const tombolTambah = (
+    <Button onClick={bukaTambahTugas} size="sm">
+      Tambah Tugas
+    </Button>
+  );
+
+  const dialog = (
+    <FormTugasDialog
+      open={dialogTerbuka}
+      onOpenChange={setDialogTerbuka}
+      tugas={tugasDiedit}
+      daftarKategori={daftarKategori}
+      onBerhasil={() => router.refresh()}
+    />
+  );
+
   if (daftar.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center gap-1 rounded-lg border border-dashed py-16 text-center">
-        <p className="font-medium">Tidak ada tugas aktif hari ini</p>
-        <p className="text-sm text-muted-foreground">
-          Semua tugas sudah ditandai selesai, atau memang belum ada yang dicatat.
-        </p>
-      </div>
+      <>
+        <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed py-16 text-center">
+          <div>
+            <p className="font-medium">Tidak ada tugas aktif hari ini</p>
+            <p className="text-sm text-muted-foreground">
+              Semua tugas sudah ditandai selesai, atau memang belum ada yang dicatat.
+            </p>
+          </div>
+          {tombolTambah}
+        </div>
+        {dialog}
+      </>
     );
   }
 
   return (
     <>
+      <div className="mb-4 flex justify-end">{tombolTambah}</div>
+
       <div className="hidden md:block">
         <Table>
           <TableHeader>
@@ -97,8 +151,12 @@ export function DaftarTugasAktif({ tugasAwal }: { tugasAwal: TugasAktif[] }) {
           </TableHeader>
           <TableBody>
             {daftar.map((tugas) => (
-              <TableRow key={tugas.id}>
-                <TableCell>
+              <TableRow
+                key={tugas.id}
+                className="cursor-pointer"
+                onClick={() => bukaUbahTugas(tugas)}
+              >
+                <TableCell onClick={(e) => e.stopPropagation()}>
                   <Checkbox onCheckedChange={() => tandaiSelesai(tugas)} />
                 </TableCell>
                 <TableCell className="font-medium">{tugas.namaTugas}</TableCell>
@@ -126,8 +184,14 @@ export function DaftarTugasAktif({ tugasAwal }: { tugasAwal: TugasAktif[] }) {
 
       <div className="flex flex-col gap-3 md:hidden">
         {daftar.map((tugas) => (
-          <div key={tugas.id} className="flex items-start gap-3 rounded-lg border p-3">
-            <Checkbox className="mt-1" onCheckedChange={() => tandaiSelesai(tugas)} />
+          <div
+            key={tugas.id}
+            className="flex cursor-pointer items-start gap-3 rounded-lg border p-3"
+            onClick={() => bukaUbahTugas(tugas)}
+          >
+            <div onClick={(e) => e.stopPropagation()}>
+              <Checkbox className="mt-1" onCheckedChange={() => tandaiSelesai(tugas)} />
+            </div>
             <div className="flex flex-1 flex-col gap-1.5">
               <p className="font-medium">{tugas.namaTugas}</p>
               <div className="flex flex-wrap gap-1.5">
@@ -148,6 +212,8 @@ export function DaftarTugasAktif({ tugasAwal }: { tugasAwal: TugasAktif[] }) {
           </div>
         ))}
       </div>
+
+      {dialog}
     </>
   );
 }

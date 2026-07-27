@@ -64,6 +64,33 @@ dokumen ini, `CLAUDE.md` yang menang.
   dikonfirmasi 27 Juli 2026 saat membangun modul Fokus Hari Ini, lihat STATUS
   PROJECT). Kalau butuh skeleton, taruh langsung di dalam komponen (state
   `isPending` client-side), jangan pakai file `loading.tsx`.
+- **Form tambah/ubah lewat satu Dialog** (bukan dua form terpisah, bukan
+  halaman terpisah — sesuai DESIGN.md): satu komponen client
+  (`src/components/tugas/FormTugasDialog.tsx` adalah contohnya) menerima
+  prop data yang mau diedit (`null` berarti mode tambah), `open` dan
+  `onOpenChange` terkontrol dari komponen pemanggil (bukan dialog itu
+  sendiri yang menyimpan status buka/tutupnya). Setelah simpan berhasil:
+  tutup dialog, tampilkan toast, lalu panggil `router.refresh()` supaya
+  Server Component induknya mengambil data terbaru dari database.
+  Komponen daftar yang menampung data (state lokal `useState` untuk
+  optimistic update) perlu menyinkronkan diri saat prop dari server
+  berubah — dengan pola "adjust state saat render" (bandingkan prop lama
+  vs baru langsung di badan komponen, panggil `setState` kalau beda),
+  BUKAN dengan `useEffect` + `setState` — ESLint project ini menolak pola
+  itu (aturan `react-hooks/set-state-in-effect`).
+- **Validasi input tugas ditulis sekali**, dipakai di client (form) maupun
+  server (route API) — lihat `validasiDataTugas()` di
+  `src/lib/tugas-validasi.ts`. File ini sengaja terpisah dari
+  `src/lib/tugas.ts` (yang isinya akses database) supaya aman diimpor
+  komponen client.
+- **Kategori tugas pakai `<input>` + `<datalist>` bawaan HTML** untuk
+  autocomplete dari kategori yang pernah dipakai (bukan komponen combobox
+  terpisah) — cukup untuk kebutuhan "boleh pilih, boleh ketik baru" tanpa
+  nambah dependency. Daftar kategori diambil lewat
+  `ambilDaftarKategori()` di `src/lib/tugas.ts`.
+- **Tanggal (batas waktu) pakai `<input type="date">` bawaan HTML**, bukan
+  komponen kalender/date-picker shadcn — alasannya sama, cukup dan tidak
+  perlu dependency `react-day-picker` tambahan untuk satu kolom tanggal.
 
 ## Library yang dipakai
 
